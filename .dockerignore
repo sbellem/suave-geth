@@ -6,3 +6,6 @@ tests/testdata
 
 suave/devenv
 !suave/devenv/cmd/main.go
+
+**/*~
+**/.*.swp
