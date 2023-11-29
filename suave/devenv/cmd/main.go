@@ -20,7 +20,8 @@ import (
 
 var (
 	exNodeEthAddr = common.HexToAddress("b5feafbdd752ad52afb7e1bd2e40432a485bbb7f")
-	exNodeNetAddr = "http://localhost:8545"
+	//exNodeNetAddr = "http://localhost:8545"
+	exNodeNetAddr = "http://suave-mevm:8545"
 
 	// This account is funded in both devnev networks
 	// address: 0xBE69d72ca5f88aCba033a063dF5DBe43a4148De0

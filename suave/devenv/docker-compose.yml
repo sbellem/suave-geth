@@ -2,7 +2,8 @@ version: "3.8"
 
 services:
   suave-mevm:
-    build: ../..
+    #build: ../..
+    build: ghcr.io/sbellem/suave-geth:e8f64e3
     command:
       - --dev
       - --dev.gaslimit=30000000
@@ -26,7 +27,8 @@ services:
       - 8545:8545
       - 8546:8546
   suave-enabled-chain:
-    build: ../..
+    #build: ../..
+    build: ghcr.io/sbellem/suave-geth:e8f64e3
     command:
       - --dev
       - --dev.gaslimit=30000000
@@ -34,3 +36,11 @@ services:
       - --ws
     ports:
       - 8555:8545
+  suapp:
+    image: suapp:latest
+    build:
+      context: ../..
+      dockerfile: suapp.Dockerfile
+    command: go run suave/devenv/cmd/main.go
+    depends_on:
+      - suave-mevm
