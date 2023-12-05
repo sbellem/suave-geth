@@ -3,7 +3,7 @@ version: "3.8"
 services:
   suave-mevm:
     #build: ../..
-    build: ghcr.io/sbellem/suave-geth:e8f64e3
+    image: ghcr.io/sbellem/suave-geth:e8f64e3
     command:
       - --dev
       - --dev.gaslimit=30000000
@@ -28,7 +28,7 @@ services:
       - 8546:8546
   suave-enabled-chain:
     #build: ../..
-    build: ghcr.io/sbellem/suave-geth:e8f64e3
+    image: ghcr.io/sbellem/suave-geth:e8f64e3
     command:
       - --dev
       - --dev.gaslimit=30000000
