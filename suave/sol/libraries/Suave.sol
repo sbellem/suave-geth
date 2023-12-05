@@ -54,6 +54,8 @@ library Suave {
 
     address public constant FILL_MEV_SHARE_BUNDLE = 0x0000000000000000000000000000000043200001;
 
+    address public constant GEN_QUOTE = 0x0000000000000000000000000000000043200002;
+
     address public constant NEW_BID = 0x0000000000000000000000000000000042030000;
 
     address public constant SIGN_ETH_TRANSACTION = 0x0000000000000000000000000000000040100001;
@@ -152,6 +154,15 @@ library Suave {
         }
 
         return data;
+    }
+
+    function genQuote(uint64 input1, uint64 input2) internal view returns (uint64) {
+        (bool success, bytes memory data) = GEN_QUOTE.staticcall(abi.encode(input1, input2));
+        if (!success) {
+            revert PeekerReverted(GEN_QUOTE, data);
+        }
+
+        return abi.decode(data, (uint64));
     }
 
     function newBid(

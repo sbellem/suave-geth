@@ -199,3 +199,14 @@ functions:
       fields:
         - name: encodedBundle
           type: bytes
+  - name: genQuote
+    address: '0x0000000000000000000000000000000043200002'
+    input:
+      - name: input1
+        type: uint64
+      - name: input2
+        type: uint64
+    output:
+      fields:
+        - name: quote
+          type: uint64

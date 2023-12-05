@@ -2,6 +2,7 @@ package vm
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -10,6 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/metrics"
 	suave "github.com/ethereum/go-ethereum/suave/core"
+	//"github.com/ethereum/go-ethereum/suave/cstore"
 )
 
 var (
@@ -133,3 +135,53 @@ type suaveRuntime struct {
 }
 
 var _ SuaveRuntime = &suaveRuntime{}
+
+/* TEEs precompiles */
+
+// genQuote generates a quote, which can be verified in a remote attestation flow.
+// The implementation of genQuote will vary greatly depending on which framework/SDK is
+// used to run suave-geth in SGX, or some other TEE.
+//
+// As a starting point we assume Gramine is used to run suave-geth in SGX, and moreover
+// that the EPID scheme is used, as this what RAVE verifies right now.
+//
+// genQuote should take at least two inputs:
+//
+//   - spid: unique identifier that corresponds the API token to communicate with IAS
+//   - reportData: user-specific data that will be included in the quote; typically a
+//     public key that binds the producer of the quote to a signing key. This perhaps
+//     could be the wallet address of the kettle (execution node address).
+//
+// TODO: Need to figure out how gramine "handles" the spid; perhaps it reads it from a
+//
+//	config file. Hence, the spid parameter may not be needed, but leaving it here
+//	now as a reminder to handle.
+//
+// NOTE: This will only generate a quote, which then must be sent for verification to
+//
+//	Intel Attestation Service (IAS).
+func (b *suaveRuntime) genQuote(spid uint64, reportData uint64) ([]byte, error) {
+
+	kettleAddress, err := KettleAddressFromTransaction(b.suaveContext.ConfidentialComputeRequestTx)
+	if err != nil {
+		return nil, err
+	}
+	f, err := os.OpenFile("/dev/attestation/user_report_data", os.O_RDWR|os.O_CREATE, 0755)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := f.Write(kettleAddress); err != nil {
+		f.Close() // ignore error; Write error takes precedence
+		return nil, err
+	}
+	if err := f.Close(); err != nil {
+		return nil, err
+	}
+
+	quote, err := os.ReadFile("/dev/attestation/quote")
+	if err != nil {
+		return nil, err
+	}
+
+	return quote, nil
+}
