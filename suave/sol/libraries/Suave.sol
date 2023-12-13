@@ -27,6 +27,24 @@ library Suave {
         bytes extra;
     }
 
+    struct IASResponseBody {
+        string id;
+        string timestamp;
+        string version;
+        string isvEnclaveQuoteStatus;
+        string isvEnclaveQuoteBody;
+        string epidPseudonym;
+        string advisoryURL;
+        string advisoryIDs;
+    }
+
+    struct IASResponseHeader {
+        string requestID;
+        string xIASReportSignature;
+        string xIASReportSigningCertificate;
+        string date;
+    }
+
     struct Withdrawal {
         uint64 index;
         uint64 validator;
@@ -54,7 +72,7 @@ library Suave {
 
     address public constant FILL_MEV_SHARE_BUNDLE = 0x0000000000000000000000000000000043200001;
 
-    address public constant GEN_QUOTE = 0x0000000000000000000000000000000043200002;
+    address public constant GET_ATTESTATION_VERIFICATION_REPORT = 0x0000000000000000000000000000000043200002;
 
     address public constant NEW_BID = 0x0000000000000000000000000000000042030000;
 
@@ -156,13 +174,17 @@ library Suave {
         return data;
     }
 
-    function genQuote(uint64 input1, uint64 input2) internal view returns (uint64) {
-        (bool success, bytes memory data) = GEN_QUOTE.staticcall(abi.encode(input1, input2));
+    function getAttestationVerificationReport(uint64 input1, uint64 input2)
+        internal
+        view
+        returns (IASResponseBody memory, IASResponseHeader memory)
+    {
+        (bool success, bytes memory data) = GET_ATTESTATION_VERIFICATION_REPORT.staticcall(abi.encode(input1, input2));
         if (!success) {
-            revert PeekerReverted(GEN_QUOTE, data);
+            revert PeekerReverted(GET_ATTESTATION_VERIFICATION_REPORT, data);
         }
 
-        return abi.decode(data, (uint64));
+        return abi.decode(data, (IASResponseBody, IASResponseHeader));
     }
 
     function newBid(

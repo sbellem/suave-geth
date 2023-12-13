@@ -87,10 +87,14 @@ library SuaveForge {
         return data;
     }
 
-    function genQuote(uint64 input1, uint64 input2) internal view returns (uint64) {
+    function getAttestationVerificationReport(uint64 input1, uint64 input2)
+        internal
+        view
+        returns (Suave.IASResponseBody memory, Suave.IASResponseHeader memory)
+    {
         bytes memory data = forgeIt("0x0000000000000000000000000000000043200002", abi.encode(input1, input2));
 
-        return abi.decode(data, (uint64));
+        return abi.decode(data, (Suave.IASResponseBody, Suave.IASResponseHeader));
     }
 
     function newBid(

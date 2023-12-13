@@ -2,7 +2,6 @@ package vm
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -160,28 +159,51 @@ var _ SuaveRuntime = &suaveRuntime{}
 // NOTE: This will only generate a quote, which then must be sent for verification to
 //
 //	Intel Attestation Service (IAS).
-func (b *suaveRuntime) genQuote(spid uint64, reportData uint64) ([]byte, error) {
+//func (b *suaveRuntime) genQuote(spid uint64, reportData uint64) ([]byte, error) {
+//
+//	kettleAddress, err := KettleAddressFromTransaction(b.suaveContext.ConfidentialComputeRequestTx)
+//	if err != nil {
+//		return nil, err
+//	}
+//	f, err := os.OpenFile("/dev/attestation/user_report_data", os.O_RDWR|os.O_CREATE, 0755)
+//	if err != nil {
+//		return nil, err
+//	}
+//	if _, err := f.Write(kettleAddress); err != nil {
+//		f.Close() // ignore error; Write error takes precedence
+//		return nil, err
+//	}
+//	if err := f.Close(); err != nil {
+//		return nil, err
+//	}
+//
+//	quote, err := os.ReadFile("/dev/attestation/quote")
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	return quote, nil
+//}
 
-	kettleAddress, err := KettleAddressFromTransaction(b.suaveContext.ConfidentialComputeRequestTx)
-	if err != nil {
-		return nil, err
-	}
-	f, err := os.OpenFile("/dev/attestation/user_report_data", os.O_RDWR|os.O_CREATE, 0755)
-	if err != nil {
-		return nil, err
-	}
-	if _, err := f.Write(kettleAddress); err != nil {
-		f.Close() // ignore error; Write error takes precedence
-		return nil, err
-	}
-	if err := f.Close(); err != nil {
-		return nil, err
+func (b *suaveRuntime) getAttestationVerificationReport(spid uint64, reportData uint64) (types.IASResponseBody, types.IASResponseHeader, error) {
+
+	iasResponseBody := types.IASResponseBody{
+		Id:                    "142090828149453720542199954221331392599",
+		Timestamp:             "2023-02-15T01:24:57.989456",
+		Version:               "4",
+		EpidPseudonym:         "EbrM6X6YCH3brjPXT23gVh/I2EG5sVfHYh+S54fb0rrAqVRTiRTOSfLsWSVTZc8wrazGG7oooGoMU7Gj5TEhsvsDIV4aYpvkSk/E3Tsb7CaGd+Iy1cEhLO4GPwdmwt/PXNQQ3htLdy3aNb7iQMrNbiFcdkVdV/tepdezMsSB8Go=",
+		AdvisoryURL:           "https://security-center.intel.com",
+		AdvisoryIDs:           "[\"INTEL-SA-00334\",\"INTEL-SA-00615\"]",
+		IsvEnclaveQuoteStatus: "SW_HARDENING_NEEDED",
+		IsvEnclaveQuoteBody:   "AgABAIAMAAANAA0AAAAAAEJhbJjVPJcSY5RHybDnAD8AAAAAAAAAAAAAAAAAAAAAFBQLB/+ADgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQAAAAAAAAAfAAAAAAAAANCud0d0wgZKYN2SVB/MfLizrN6g15PzsnonpE2/cedfAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACD1xnnferKFHD2uvYqTXdDA8iZ22kCD5xw7h38CMfOngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACk8eLeQq3kKFam57ApQyJ412rRw+hs7M1vL0ZTKGHCDAYVo7T4o+KD0jwJJV5RNg4AAAAAAAAAAAAAAAAAAAAA",
 	}
 
-	quote, err := os.ReadFile("/dev/attestation/quote")
-	if err != nil {
-		return nil, err
+	iasResponseHeader := types.IASResponseHeader{
+		RequestID:                    "26fece5bc70f4b28a669b9c333c81b44",
+		XIASReportSignature:          "TBXIDsg/XrvuIPG+DPH3wYUBeZiEQsugJxUuAbeUdFkvLNUm/IsrKAi5xq/q7WQgYar6m5L/ztx8+8FBi7mGVxnvhsnenwG8Fmz18s45KnDVzSAXM2yIF+qtEprZ/13YjrPswmsNIeBKugHAvzA+1eND6FEE6npuRVFJOBWDWIJb8zn71RFlgSGFdVUUeOScCuz7HrQMhjxEAcRNoqpWNOM1USkVs413x9xpPui5+kHzv52TnBxeOCwBDELaI3ZQwWo/9KxQQ3ayFbH8CPaaPcDD0EBPZD5C4weKcNtdYTBch+kK05loso4zPiSwiHsPAazlXWR4BVdf2WZIwAar4w==",
+		XIASReportSigningCertificate: "-----BEGIN CERTIFICATE-----\nMIIEoTCCAwmgAwIBAgIJANEHdl0yo7CWMA0GCSqGSIb3DQEBCwUAMH4xCzAJBgNV\nBAYTAlVTMQswCQYDVQQIDAJDQTEUMBIGA1UEBwwLU2FudGEgQ2xhcmExGjAYBgNV\nBAoMEUludGVsIENvcnBvcmF0aW9uMTAwLgYDVQQDDCdJbnRlbCBTR1ggQXR0ZXN0\nYXRpb24gUmVwb3J0IFNpZ25pbmcgQ0EwHhcNMTYxMTIyMDkzNjU4WhcNMjYxMTIw\nMDkzNjU4WjB7MQswCQYDVQQGEwJVUzELMAkGA1UECAwCQ0ExFDASBgNVBAcMC1Nh\nbnRhIENsYXJhMRowGAYDVQQKDBFJbnRlbCBDb3Jwb3JhdGlvbjEtMCsGA1UEAwwk\nSW50ZWwgU0dYIEF0dGVzdGF0aW9uIFJlcG9ydCBTaWduaW5nMIIBIjANBgkqhkiG\n9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqXot4OZuphR8nudFrAFiaGxxkgma/Es/BA+t\nbeCTUR106AL1ENcWA4FX3K+E9BBL0/7X5rj5nIgX/R/1ubhkKWw9gfqPG3KeAtId\ncv/uTO1yXv50vqaPvE1CRChvzdS/ZEBqQ5oVvLTPZ3VEicQjlytKgN9cLnxbwtuv\nLUK7eyRPfJW/ksddOzP8VBBniolYnRCD2jrMRZ8nBM2ZWYwnXnwYeOAHV+W9tOhA\nImwRwKF/95yAsVwd21ryHMJBcGH70qLagZ7Ttyt++qO/6+KAXJuKwZqjRlEtSEz8\ngZQeFfVYgcwSfo96oSMAzVr7V0L6HSDLRnpb6xxmbPdqNol4tQIDAQABo4GkMIGh\nMB8GA1UdIwQYMBaAFHhDe3amfrzQr35CN+s1fDuHAVE8MA4GA1UdDwEB/wQEAwIG\nwDAMBgNVHRMBAf8EAjAAMGAGA1UdHwRZMFcwVaBToFGGT2h0dHA6Ly90cnVzdGVk\nc2VydmljZXMuaW50ZWwuY29tL2NvbnRlbnQvQ1JML1NHWC9BdHRlc3RhdGlvblJl\ncG9ydFNpZ25pbmdDQS5jcmwwDQYJKoZIhvcNAQELBQADggGBAGcIthtcK9IVRz4r\nRq+ZKE+7k50/OxUsmW8aavOzKb0iCx07YQ9rzi5nU73tME2yGRLzhSViFs/LpFa9\nlpQL6JL1aQwmDR74TxYGBAIi5f4I5TJoCCEqRHz91kpG6Uvyn2tLmnIdJbPE4vYv\nWLrtXXfFBSSPD4Afn7+3/XUggAlc7oCTizOfbbtOFlYA4g5KcYgS1J2ZAeMQqbUd\nZseZCcaZZZn65tdqee8UXZlDvx0+NdO0LR+5pFy+juM0wWbu59MvzcmTXbjsi7HY\n6zd53Yq5K244fwFHRQ8eOB0IWB+4PfM7FeAApZvlfqlKOlLcZL2uyVmzRkyR5yW7\n2uo9mehX44CiPJ2fse9Y6eQtcfEhMPkmHXI01sN+KwPbpA39+xOsStjhP9N1Y1a2\ntQAVo+yVgLgV2Hws73Fc0o3wC78qPEA+v2aRs/Be3ZFDgDyghc/1fgU+7C+P6kbq\nd4poyb6IW8KCJbxfMJvkordNOgOUUxndPHEi/tb/U7uLjLOgPA==\n-----END CERTIFICATE-----\n",
+		Date:                         "Wed, 13 Dec 2023 04:30:44 GMT",
 	}
 
-	return quote, nil
+	return iasResponseBody, iasResponseHeader, nil
 }

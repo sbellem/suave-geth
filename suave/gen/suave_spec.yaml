@@ -46,6 +46,51 @@ structs:
         type: Withdrawal[]
       - name: extra
         type: bytes
+  - name: IASResponseBody
+    fields:
+      - name: id
+        type: string
+      - name: timestamp
+        type: string
+      - name: version
+        type: string
+      - name: isvEnclaveQuoteStatus
+        type: string
+      - name: isvEnclaveQuoteBody
+        type: string
+      #- name: revocationReason
+      #  type: string
+      #- name: pseManifestStatus
+      #  type: string
+      #- name: pseManifestHash
+      #  type: string
+      #- name: platformInfoBlob
+      #  type: string
+      #- name: nonce
+      #  type: string
+      - name: epidPseudonym
+        type: string
+      - name: advisoryURL
+        type: string
+      - name: advisoryIDs
+        type: string
+  - name: IASResponseHeader
+    fields:
+      #- name: warning
+      #  type: string
+      #- name: contentLength
+      #  type: string
+      #- name: contentType
+      #  type: string
+      - name: requestID
+        type: string
+      - name: xIASReportSignature
+        type: string
+      - name: xIASReportSigningCertificate
+        type: string
+      - name: date
+        type: string
+
 functions:
   - name: confidentialInputs
     address: "0x0000000000000000000000000000000042010001"
@@ -199,7 +244,7 @@ functions:
       fields:
         - name: encodedBundle
           type: bytes
-  - name: genQuote
+  - name: getAttestationVerificationReport
     address: '0x0000000000000000000000000000000043200002'
     input:
       - name: input1
@@ -208,5 +253,7 @@ functions:
         type: uint64
     output:
       fields:
-        - name: quote
-          type: uint64
+        - name: iasResponseBody
+          type: IASResponseBody
+        - name: iasResponseHeader
+          type: IASResponseHeader
