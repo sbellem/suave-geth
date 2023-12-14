@@ -74,7 +74,7 @@ structs:
         type: string
       - name: advisoryIDs
         type: string
-  - name: IASResponseHeader
+  - name: IASResponseHeaders
     fields:
       #- name: warning
       #  type: string
@@ -90,6 +90,12 @@ structs:
         type: string
       - name: date
         type: string
+  - name: IASResponse
+    fields:
+      - name: body
+        type: IASResponseBody
+      - name: headers
+        type: IASResponseHeaders
 
 functions:
   - name: confidentialInputs
@@ -246,14 +252,14 @@ functions:
           type: bytes
   - name: getAttestationVerificationReport
     address: '0x0000000000000000000000000000000043200002'
-    input:
-      - name: input1
-        type: uint64
-      - name: input2
-        type: uint64
+    #input:
+    #  - name: input1
+    #    type: uint64
+    #  - name: input2
+    #    type: uint64
     output:
       fields:
-        - name: iasResponseBody
-          type: IASResponseBody
-        - name: iasResponseHeader
-          type: IASResponseHeader
+        - name: iasResponse
+          type: IASResponse
+        #- name: iasResponseHeaders
+        #  type: IASResponseHeaders

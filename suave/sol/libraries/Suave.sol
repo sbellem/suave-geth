@@ -27,6 +27,11 @@ library Suave {
         bytes extra;
     }
 
+    struct IASResponse {
+        IASResponseBody body;
+        IASResponseHeaders headers;
+    }
+
     struct IASResponseBody {
         string id;
         string timestamp;
@@ -38,7 +43,7 @@ library Suave {
         string advisoryIDs;
     }
 
-    struct IASResponseHeader {
+    struct IASResponseHeaders {
         string requestID;
         string xIASReportSignature;
         string xIASReportSigningCertificate;
@@ -174,17 +179,13 @@ library Suave {
         return data;
     }
 
-    function getAttestationVerificationReport(uint64 input1, uint64 input2)
-        internal
-        view
-        returns (IASResponseBody memory, IASResponseHeader memory)
-    {
-        (bool success, bytes memory data) = GET_ATTESTATION_VERIFICATION_REPORT.staticcall(abi.encode(input1, input2));
+    function getAttestationVerificationReport() internal view returns (IASResponse memory) {
+        (bool success, bytes memory data) = GET_ATTESTATION_VERIFICATION_REPORT.staticcall(abi.encode());
         if (!success) {
             revert PeekerReverted(GET_ATTESTATION_VERIFICATION_REPORT, data);
         }
 
-        return abi.decode(data, (IASResponseBody, IASResponseHeader));
+        return abi.decode(data, (IASResponse));
     }
 
     function newBid(
