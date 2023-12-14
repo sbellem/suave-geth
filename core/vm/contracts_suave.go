@@ -194,7 +194,7 @@ func (b *suaveRuntime) getAttestationVerificationReport() (types.IASResponse, er
 
 	isvEnclaveQuoteBody, err := base64.StdEncoding.DecodeString(isvEnclaveQuoteBodyBase64)
 	if err != nil {
-		return nil, err
+		return types.IASResponse{}, err
 	}
 
 	iasResponseBody := types.IASResponseBody{
