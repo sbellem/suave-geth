@@ -37,7 +37,7 @@ library Suave {
         string timestamp;
         string version;
         string isvEnclaveQuoteStatus;
-        string isvEnclaveQuoteBody;
+        bytes isvEnclaveQuoteBody;
         string epidPseudonym;
         string advisoryURL;
         string advisoryIDs;

@@ -57,7 +57,7 @@ structs:
       - name: isvEnclaveQuoteStatus
         type: string
       - name: isvEnclaveQuoteBody
-        type: string
+        type: bytes
       #- name: revocationReason
       #  type: string
       #- name: pseManifestStatus
