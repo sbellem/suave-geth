@@ -87,7 +87,7 @@ structs:
       - name: xIASReportSignature
         type: bytes
       - name: xIASReportSigningCertificate
-        type: string
+        type: bytes
       - name: date
         type: string
   - name: IASResponse
