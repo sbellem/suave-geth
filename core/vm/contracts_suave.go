@@ -1,7 +1,6 @@
 package vm
 
 import (
-	"crypto/x509"
 	"encoding/base64"
 	"encoding/pem"
 	"fmt"
@@ -243,16 +242,16 @@ d4poyb6IW8KCJbxfMJvkordNOgOUUxndPHEi/tb/U7uLjLOgPA==
 -----END CERTIFICATE-----
 	`)
 
-	certBlock, rest := pem.Decode(xiasReportSigningCertificate)
+	certBlock, _ := pem.Decode(xiasReportSigningCertificate)
 
 	if certBlock == nil || certBlock.Type != "CERTIFICATE" {
 		return types.IASResponse{}, err
 	}
 
-	cert, err := x509.ParseCertificate(certBlock.Bytes)
-	if err != nil {
-		return types.IASResponse{}, err
-	}
+	//cert, err := x509.ParseCertificate(certBlock.Bytes)
+	//if err != nil {
+	//	return types.IASResponse{}, err
+	//}
 
 	iasResponseHeaders := types.IASResponseHeaders{
 		RequestID:                    "26fece5bc70f4b28a669b9c333c81b44",
