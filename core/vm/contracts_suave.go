@@ -205,7 +205,7 @@ func (b *suaveRuntime) getAttestationVerificationReport() (types.IASResponse, er
 		IsvEnclaveQuoteBody:   isvEnclaveQuoteBody,
 	}
 
-	xiasReportSignatureBase64 = "TBXIDsg/XrvuIPG+DPH3wYUBeZiEQsugJxUuAbeUdFkvLNUm/IsrKAi5xq/q7WQgYar6m5L/ztx8+8FBi7mGVxnvhsnenwG8Fmz18s45KnDVzSAXM2yIF+qtEprZ/13YjrPswmsNIeBKugHAvzA+1eND6FEE6npuRVFJOBWDWIJb8zn71RFlgSGFdVUUeOScCuz7HrQMhjxEAcRNoqpWNOM1USkVs413x9xpPui5+kHzv52TnBxeOCwBDELaI3ZQwWo/9KxQQ3ayFbH8CPaaPcDD0EBPZD5C4weKcNtdYTBch+kK05loso4zPiSwiHsPAazlXWR4BVdf2WZIwAar4w=="
+	xiasReportSignatureBase64 := "TBXIDsg/XrvuIPG+DPH3wYUBeZiEQsugJxUuAbeUdFkvLNUm/IsrKAi5xq/q7WQgYar6m5L/ztx8+8FBi7mGVxnvhsnenwG8Fmz18s45KnDVzSAXM2yIF+qtEprZ/13YjrPswmsNIeBKugHAvzA+1eND6FEE6npuRVFJOBWDWIJb8zn71RFlgSGFdVUUeOScCuz7HrQMhjxEAcRNoqpWNOM1USkVs413x9xpPui5+kHzv52TnBxeOCwBDELaI3ZQwWo/9KxQQ3ayFbH8CPaaPcDD0EBPZD5C4weKcNtdYTBch+kK05loso4zPiSwiHsPAazlXWR4BVdf2WZIwAar4w=="
 
 	xiasReportSignature, err := base64.StdEncoding.DecodeString(xiasReportSignatureBase64)
 	if err != nil {
