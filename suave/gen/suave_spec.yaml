@@ -85,7 +85,7 @@ structs:
       - name: requestID
         type: string
       - name: xIASReportSignature
-        type: string
+        type: bytes
       - name: xIASReportSigningCertificate
         type: string
       - name: date

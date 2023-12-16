@@ -45,7 +45,7 @@ library Suave {
 
     struct IASResponseHeaders {
         string requestID;
-        string xIASReportSignature;
+        bytes xIASReportSignature;
         string xIASReportSigningCertificate;
         string date;
     }
