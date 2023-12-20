@@ -1,10 +1,13 @@
 package vm
 
 import (
+	//"crypto/rsa"
+	//"crypto/x509"
 	"encoding/base64"
 	"encoding/pem"
 	"fmt"
 	"strings"
+	"strconv"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
@@ -252,6 +255,9 @@ d4poyb6IW8KCJbxfMJvkordNOgOUUxndPHEi/tb/U7uLjLOgPA==
 	//if err != nil {
 	//	return types.IASResponse{}, err
 	//}
+	//publicKey := cert.PublicKey.(*rsa.PublicKey)
+	//modulus := publicKey.N.Bytes()
+	//exponent := publicKey.E
 
 	iasResponseHeaders := types.IASResponseHeaders{
 		RequestID:                    "26fece5bc70f4b28a669b9c333c81b44",
@@ -264,6 +270,35 @@ d4poyb6IW8KCJbxfMJvkordNOgOUUxndPHEi/tb/U7uLjLOgPA==
 		Body:    iasResponseBody,
 		Headers: iasResponseHeaders,
 	}
-	//return iasResponseBody, iasResponseHeader, nil
 	return iasResponse, nil
 }
+
+func (b *suaveRuntime) _getAttestationVerificationReport() (types.IASResponse, error) {
+	var iasResponseJson = []byte(`{"id": "225649836160686160758535344341160262827", "timestamp": "2023-12-20T06:50:26.239273", "version": 4, "epidPseudonym": "CbRcfe7XwPLcizP2l5YlmKATTbqKNFJcKkbQNRKlNtmX40/ylm8TFrdmZ2X7AkwP3HXVb2MfNMCsMBnPDZpCxmhRcOx74GhH4JnwQ64B3C8l8i7EQmsHAJRFjb7bXUGnSgwj4BaOXD7ZT74ywIO6dn7rGt2Yxpnv+jytLuCA7Wc=", "advisoryURL": "https://security-center.intel.com", "advisoryIDs": ["INTEL-SA-00161", "INTEL-SA-00220", "INTEL-SA-00270", "INTEL-SA-00293", "INTEL-SA-00320", "INTEL-SA-00329", "INTEL-SA-00334", "INTEL-SA-00381", "INTEL-SA-00389", "INTEL-SA-00477", "INTEL-SA-00614", "INTEL-SA-00615", "INTEL-SA-00617", "INTEL-SA-00828"], "isvEnclaveQuoteStatus": "GROUP_OUT_OF_DATE", "platformInfoBlob": "150200650400090000141402040101070000000000000000000D00000C000000020000000000000B61A8A3E18E915544509B22B0BC38A962CB015BD251609841400940524E06C614DC436C88A59625E8F6E9193D7C499E12CF553140ABD5BCE3B6F3708A75C9176387", "isvEnclaveQuoteBody": "AgABAGELAAAOAA4AAAAAAIj0T3eSfFn8Qor6PiZYM0AAAAAAAAAAAAAAAAAAAAAACRQCBAECAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwAAAAAAAAAHAAAAAAAAANvpmsDZ36O8cIn+k8ePfaiJRxPPRq0w5JVJBGxhzLRTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC9ccY4Dvd8VBfostHOLUtlBLn0GOUEk0JEDP/yRD2VvQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC1/q+911KtUq+34b0uQEMqSFu7fwAAAAAAAAAAAAAAAFr89mLvCMPVmLcIqghlZgi6uaLBMpRi6tEr8LPUD4cc"}`)
+
+	type IASResponse struct {
+		Id                    string
+		Timestamp             string
+		Version               int
+		IsvEnclaveQuoteStatus string
+		IsvEnclaveQuoteBody   string
+		EpidPseudonym         string
+		AdvisoryURL           string
+		AdvisoryIDs           []string
+	}
+
+	var iasResponse IASResponse
+
+	err := json.Unmarshal(iasResponseJson, &iasResponse)
+
+	if err != nil {
+		return types.IASResponse{}, err
+	}
+
+	version := strconv.Itoa(iasResponse.Version)
+	isvEnclaveQuoteBody, err = base64.StdEncoding.DecodeString(iasResponse.IsvEnclaveQuoteBody)
+	if err != nil {
+		return types.IASResponse{}, err
+	}
+
+
